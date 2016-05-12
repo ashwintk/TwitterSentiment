@@ -1,0 +1,31 @@
+The following contains information on how to execute the developed Mpareduce program
+Add all the necessary JAR files to compile the partitioner
+
+javac CandidatePartitioner.java
+
+Add the created partitioner to a JAR file
+
+jar cvf CandidatePartitioner.jar *.class
+
+Add created JAR file to Hadoop classpath
+
+export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/path/to/jar/CandidatePartitioner.jar
+
+Execute the streaming command as follows
+
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar \
+-D mapred.reduce.tasks=7 \
+-D stream.num.map.output.key.fields=1 \
+-libjars /home/tashwin/PoliticsSpeech/CandidatePartitioner.jar \
+-file /home/tashwin/PoliticsSpeech/Contractions.csv \
+-file /home/tashwin/PoliticsSpeech/internet_slang.csv \
+-file /home/tashwin/PoliticsSpeech/ManipulateTweets.py \
+-file /home/tashwin/PoliticsSpeech/ExtractInfoFromTweetsMapper.py \
+-file /home/tashwin/PoliticsSpeech/ExtractInfoFromTweetsReducer.py \
+-file /home/tashwin/PoliticsSpeech/Candidates.csv \
+-file /home/tashwin/PoliticsSpeech/ExtractInfoFromTweetsReducer.py \
+-mapper ExtractInfoFromTweetsMapper.py \
+-partitioner CandidatePartitioner \
+-reducer ExtractInfoFromTweetsReducer.py \
+-input /TwitterData/Politics \
+-output /tashwin/Tweets_Extracts_2

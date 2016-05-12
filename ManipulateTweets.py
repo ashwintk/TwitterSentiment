@@ -87,7 +87,7 @@ def replaceOccurrencesOfAString(text,splitBy,dict,lowerFlag):
 
 
 # This function can be used to replace emoticons with their emotions (POSITIVE/NEGATIVE/NEUTRAL)
-# A complete list of emoticons are obtained from wikipedia.org/wiki/List_of_emoticons
+# A complete list of emoticons are obtained from www.wikipedia.org/wiki/List_of_emoticons
 def replaceEmoticons(tweet_texts, splitBy,lowerFlag):
     str_array = tweet_texts.split(splitBy)
     return_str = ""
@@ -134,3 +134,16 @@ def replaceEmoticons(tweet_texts, splitBy,lowerFlag):
         else:
             return_str += " " + wordToFind
     return return_str
+
+# This function will return the candidate names if they are in a contained in a tweet
+def identifyCandidates(tweet_text,candidate_dict):
+    keys_to_check = candidate_dict.keys()
+    matching = [s for s in keys_to_check if s in tweet_text.lower()]
+    candidates = set()
+    if len(matching) > 0:
+        for item in matching:
+            candidates.add(candidate_dict[item])
+    else:
+        candidates.add('other')
+    return list(candidates)
+

@@ -7,9 +7,10 @@ sys.path.append('./')
 import ManipulateTweets as manip
 
 # This mapper reads the twitter data and extracts only the following information
-# 1. Data Created
+# 1. Date Created
 # 2. User Handle
 # 3. Tweet text
+# 4. Candidate
 
 # This mapper also performs the following operations on the tweet text.
 # 1. Remove URL's and user mentions.
@@ -19,6 +20,7 @@ import ManipulateTweets as manip
 # 6. Strips all punctuations other than space, apostrophe and hyphen
 # 7. Replaces Internet slang words with complete words
 # 8. Replaces multiple white spaces with a single space
+# 9. Identifies which candidate the tweet is about
 
 
 
@@ -34,6 +36,10 @@ internet_slang_dict = manip.readFileandReturnADict("internet_slang.csv", "rb", '
 # Anything but the negative contractions are replaced with their full form
 
 contractions_dict = manip.readFileandReturnADict("Contractions.csv", "rU", ',', 0, 1, True)
+
+# A list of candidate names and their campaign chants and slogans are saved as a CSV file.
+# This information is loaded into a dictionary
+candidates_dict = manip.readFileandReturnADict("Candidates.csv","r",",",0,1, True, None)
 
 for line in sys.stdin:
     try:
@@ -65,7 +71,11 @@ for line in sys.stdin:
             tweet_text = manip.replaceEmoticons(str(tweet_text), ' ', False).lstrip().strip()
             # Convert multiple white spaces to a single white space
             tweet_text = manip.convertMultipleWhiteSpacesToSingleWhiteSpace(tweet_text)
-            # Send Date created, user handle and tweet text as output
-            print '%s,%s\t%s' % (date_created, user_handle, tweet_text)
+            # Get candidates in the tweets
+            candidates = manip.identifyCandidates(tweet_text,candidates_dict)
+            # Print the tweet with the candidate it talks about
+            for candidate in candidates:
+                # Send Date created, user handle and tweet text as output
+                print '%s\t%s,%s\t%s' % (candidate,date_created, user_handle, tweet_text)
     except ValueError:
         continue
