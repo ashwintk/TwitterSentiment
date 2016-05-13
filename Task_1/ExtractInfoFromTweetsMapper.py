@@ -6,13 +6,7 @@ sys.path.append('./')
 
 import ManipulateTweets as manip
 
-# This mapper reads the twitter data and extracts only the following information
-# 1. Date Created
-# 2. User Handle
-# 3. Tweet text
-# 4. Candidate
-
-# This mapper also performs the following operations on the tweet text.
+# This mapper performs the following operations on the tweet text.
 # 1. Remove URL's and user mentions.
 # 2. Replaces new line character (\n) with space and return carriage character (\r) with ''
 # 4. Replaces hash tags with words
@@ -23,6 +17,11 @@ import ManipulateTweets as manip
 # 9. Identifies which candidate the tweet is about
 
 
+# This mapper extracts only the following information from tweets
+# 1. Date Created
+# 2. User Handle
+# 3. Tweet text
+# 4. Candidate
 
 # A complete list of internet slang words are obtained from noslang.com
 # This file is stored in CSV format and passed as a side-effect

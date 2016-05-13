@@ -24,8 +24,9 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar \
 -file /home/tashwin/PoliticsSpeech/ExtractInfoFromTweetsReducer.py \
 -file /home/tashwin/PoliticsSpeech/Candidates.csv \
 -file /home/tashwin/PoliticsSpeech/ExtractInfoFromTweetsReducer.py \
+-file /home/tashwin/PoliticsSpeech/stopwords \
 -mapper ExtractInfoFromTweetsMapper.py \
 -partitioner CandidatePartitioner \
 -reducer ExtractInfoFromTweetsReducer.py \
--input /TwitterData/Politics \
--output /tashwin/Tweets_Extracts_2
+-input /TwitterData/PoliticsThree \
+-output /tashwin/Tweets_Extracts_3

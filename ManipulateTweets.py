@@ -35,8 +35,7 @@ def stripNewLineAndReturnCarriage(tweetText):
 
 # This function replaces words with repeating 'n' or more same characters with a single character
 def replaceRepeatedCharacters(tweetText):
-    pattern = re.compile(r"(.)\1{1,}", re.DOTALL)
-    return pattern.sub(r"\1\1\1", tweetText)
+    return re.sub(r"(.)\1{3,}",r"\1", tweetText)
 
 # Filter tweets other than passed language
 def CheckLanguage(tweetLanguage,langFilter):
@@ -147,3 +146,24 @@ def identifyCandidates(tweet_text,candidate_dict):
         candidates.add('other')
     return list(candidates)
 
+# This function removes items from a list in a tweet text
+def removeItemsInTweetContainedInAList(tweet_text,stop_words,splitBy):
+    wordsArray = tweet_text.split(splitBy)
+    StopWords = list(set(wordsArray).intersection(set(stop_words)))
+    return_str=""
+    for word in wordsArray:
+        if word not in StopWords:
+            return_str += word + splitBy
+    return return_str.strip().lstrip()
+
+# This function reads a file and returns its contents as an array
+def readFileandReturnAnArray(fileName, readMode, isLower):
+    myArray=[]
+    with open(fileName, readMode) as readHandle:
+        for line in readHandle.readlines():
+            lineRead = line
+            if isLower:
+                lineRead = lineRead.lower()
+            myArray.append(lineRead.strip().lstrip())
+    readHandle.close()
+    return myArray
