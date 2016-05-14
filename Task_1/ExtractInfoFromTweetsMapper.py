@@ -15,6 +15,8 @@ import ManipulateTweets as manip
 # 7. Replaces Internet slang words with complete words
 # 8. Replaces multiple white spaces with a single space
 # 9. Identifies which candidate the tweet is about
+# 10. Removes stop words from tweets
+# 11. Removes double quotes from string
 
 
 # This mapper extracts only the following information from tweets
@@ -39,6 +41,15 @@ contractions_dict = manip.readFileandReturnADict("Contractions.csv", "rU", ',', 
 # A list of candidate names and their campaign chants and slogans are saved as a CSV file.
 # This information is loaded into a dictionary
 candidates_dict = manip.readFileandReturnADict("Candidates.csv","r",",",0,1, True, None)
+
+# A complete list of internet slang words are obtained from http://webconfs.com/stop-words.php
+# These words are ignored by search engines to produce faster results
+# RT - refers to re-tweet and it is a stop word too as it signifies nothing
+stop_words = manip.readFileandReturnAnArray("stopwords","r",True)
+stop_words.append("RT")
+stop_words.append("&amp;")
+stop_words.append("&amp")
+
 
 for line in sys.stdin:
     try:
@@ -72,6 +83,10 @@ for line in sys.stdin:
             tweet_text = manip.convertMultipleWhiteSpacesToSingleWhiteSpace(tweet_text)
             # Get candidates in the tweets
             candidates = manip.identifyCandidates(tweet_text,candidates_dict)
+            # Remove double quotes
+            tweet_text = re.sub(r"\"", r"", tweet_text)
+            # Remove stop words from tweets
+            tweet_text = manip.removeItemsInTweetContainedInAList(tweet_text.strip().lstrip(),stop_words," ")
             # Print the tweet with the candidate it talks about
             for candidate in candidates:
                 # Send Date created, user handle and tweet text as output
