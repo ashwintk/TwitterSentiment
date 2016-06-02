@@ -1,0 +1,11 @@
+ parameter in mapper that is arg1 is 'flu' or any other topic
+
+
+
+ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar
+ -D mapred.reduce.tasks=0
+ -file /home/paryani/VeracityAnalysis/objectivitymapper.py
+ -mapper 'objectivitymapper.py flu'
+ -file /home/paryani/VeracityAnalysis/textblob-0.11.1.mod
+ -input /paryani/test
+ -output /paryani/Tweetstest1
