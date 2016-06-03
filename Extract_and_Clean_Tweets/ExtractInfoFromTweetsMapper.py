@@ -87,9 +87,7 @@ for line in sys.stdin:
             tweet_text = re.sub(r"\"", r"", tweet_text)
             # Remove stop words from tweets
             tweet_text = manip.removeItemsInTweetContainedInAList(tweet_text.strip().lstrip(),stop_words," ")
-            # Print the tweet with the candidate it talks about
-            for candidate in candidates:
-                # Send Date created, user handle and tweet text as output
-                print '%s\t%s,%s\t%s' % (candidate,date_created, user_handle, tweet_text)
+            # Print cleaned tweet
+            print '%s,%s\t%s' % (date_created, user_handle, tweet_text)
     except ValueError:
         continue

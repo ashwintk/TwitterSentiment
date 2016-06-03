@@ -14,9 +14,7 @@ export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/path/to/jar/CandidatePartitioner.jar
 Execute the streaming command as follows
 
 hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar \
--D mapred.reduce.tasks=7 \
--D stream.num.map.output.key.fields=1 \
--libjars /home/tashwin/PoliticsSpeech/CandidatePartitioner.jar \
+-D mapred.reduce.tasks=1 \
 -file /home/tashwin/PoliticsSpeech/Contractions.csv \
 -file /home/tashwin/PoliticsSpeech/internet_slang.csv \
 -file /home/tashwin/PoliticsSpeech/ManipulateTweets.py \
@@ -26,7 +24,6 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar \
 -file /home/tashwin/PoliticsSpeech/ExtractInfoFromTweetsReducer.py \
 -file /home/tashwin/PoliticsSpeech/stopwords \
 -mapper ExtractInfoFromTweetsMapper.py \
--partitioner CandidatePartitioner \
 -reducer ExtractInfoFromTweetsReducer.py \
 -input /TwitterData/PoliticsThree \
 -output /tashwin/Tweets_Extracts_3
