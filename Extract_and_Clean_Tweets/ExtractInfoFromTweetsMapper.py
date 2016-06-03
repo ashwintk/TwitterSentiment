@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import json, sys, re
+import json, sys, re, os
 
 sys.path.append('./')
 
@@ -61,7 +61,7 @@ for line in sys.stdin:
         user_handle = parsed_json_tweets['user']['screen_name'].lstrip().strip()
         # Extract tweet text
         tweet_text = parsed_json_tweets['text'].lstrip().strip()
-        if len(tweet_text) > 1:
+        if tweet_text != "":
             # Remove new line and carriage return
             tweet_text = manip.stripNewLineAndReturnCarriage(tweet_text)
             # Remove URL's & User Mentions
@@ -77,17 +77,15 @@ for line in sys.stdin:
             tweet_text = manip.replaceOccurrencesOfAString(tweet_text, ' ', internet_slang_dict, True).lstrip().strip()
             # Replace all word contractions
             tweet_text = manip.replaceOccurrencesOfAString(tweet_text, ' ', contractions_dict, True).lstrip().strip()
-            # Replace all emoticons
-            tweet_text = manip.replaceEmoticons(str(tweet_text), ' ', False).lstrip().strip()
+            # Replace everything but alpha-numeric characters
+            tweet_text = tweet_text = re.sub(r'([^\s\w]|_)', '', tweet_text)
             # Convert multiple white spaces to a single white space
             tweet_text = manip.convertMultipleWhiteSpacesToSingleWhiteSpace(tweet_text)
-            # Get candidates in the tweets
-            candidates = manip.identifyCandidates(tweet_text,candidates_dict)
-            # Remove double quotes
-            tweet_text = re.sub(r"\"", r"", tweet_text)
             # Remove stop words from tweets
             tweet_text = manip.removeItemsInTweetContainedInAList(tweet_text.strip().lstrip(),stop_words," ")
-            # Print cleaned tweet
-            print '%s,%s\t%s' % (date_created, user_handle, tweet_text)
+            wordToFilter = os.environ["FILTER_WORD"]
+            if manip.isWordInTweet(tweet_text, wordToFilter):
+                # Print cleaned tweet
+                print '%s,%s\t%s' % (date_created, user_handle, tweet_text.lower())
     except ValueError:
         continue

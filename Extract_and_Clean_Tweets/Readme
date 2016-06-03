@@ -19,11 +19,11 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar \
 -file /home/tashwin/PoliticsSpeech/internet_slang.csv \
 -file /home/tashwin/PoliticsSpeech/ManipulateTweets.py \
 -file /home/tashwin/PoliticsSpeech/ExtractInfoFromTweetsMapper.py \
--file /home/tashwin/PoliticsSpeech/ExtractInfoFromTweetsReducer.py \
 -file /home/tashwin/PoliticsSpeech/Candidates.csv \
 -file /home/tashwin/PoliticsSpeech/ExtractInfoFromTweetsReducer.py \
 -file /home/tashwin/PoliticsSpeech/stopwords \
+-cmdenv FILTER_WORD=flu \
 -mapper ExtractInfoFromTweetsMapper.py \
--reducer ExtractInfoFromTweetsReducer.py \
+-reducer /bin/cat \
 -input /TwitterData/PoliticsThree \
 -output /tashwin/Tweets_Extracts_3
