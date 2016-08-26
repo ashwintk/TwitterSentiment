@@ -1,4 +1,4 @@
-The following contains information on how to execute the developed Mpareduce program
+The following contains information on how to execute the developed Mapreduce program
 Add all the necessary JAR files to compile the partitioner
 
 javac CandidatePartitioner.java
@@ -28,5 +28,5 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar \
 -mapper ExtractInfoFromTweetsMapper.py \
 -partitioner CandidatePartitioner \
 -reducer ExtractInfoFromTweetsReducer.py \
--input /TwitterData/PoliticsThree \
--output /tashwin/Tweets_Extracts_3
+-input /tashwin/TwitterSamp \
+-output /tashwin/TwitterSamp_Extract

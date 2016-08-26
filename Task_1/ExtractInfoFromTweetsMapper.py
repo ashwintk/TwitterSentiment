@@ -49,7 +49,7 @@ stop_words = manip.readFileandReturnAnArray("stopwords","r",True)
 stop_words.append("RT")
 stop_words.append("&amp;")
 stop_words.append("&amp")
-
+stop_words.append("trump")
 
 for line in sys.stdin:
     try:
@@ -84,7 +84,7 @@ for line in sys.stdin:
             # Get candidates in the tweets
             candidates = manip.identifyCandidates(tweet_text,candidates_dict)
             # Remove double quotes
-            tweet_text = re.sub(r"\"", r"", tweet_text)
+            tweet_text = re.sub(r"\":", r"", tweet_text)
             # Remove stop words from tweets
             tweet_text = manip.removeItemsInTweetContainedInAList(tweet_text.strip().lstrip(),stop_words," ")
             # Print the tweet with the candidate it talks about

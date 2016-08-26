@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 import re, csv, sys
 
+# This function is used to split a string and return an array based on a passed delimiter
+def splitStringAndReturnArray(text, delimiter):
+    return text.lstrip().strip().split(delimiter)
 # This function is used to remove all the URL's in a tweet
 def removeURL(tweetText):
     return re.sub('((www\.[^\s]+)|(https?://[^\s]+))','',tweetText)
@@ -88,7 +91,7 @@ def replaceOccurrencesOfAString(text,splitBy,dict,lowerFlag):
 # This function can be used to replace emoticons with their emotions (POSITIVE/NEGATIVE/NEUTRAL)
 # A complete list of emoticons are obtained from www.wikipedia.org/wiki/List_of_emoticons
 def replaceEmoticons(tweet_texts, splitBy,lowerFlag):
-    str_array = tweet_texts.split(splitBy)
+    str_array = splitStringAndReturnArray(tweet_texts, splitBy)
     return_str = ""
     for word in str_array:
         wordToFind = str(word).strip().lstrip()
@@ -148,7 +151,7 @@ def identifyCandidates(tweet_text,candidate_dict):
 
 # This function removes items from a list in a tweet text
 def removeItemsInTweetContainedInAList(tweet_text,stop_words,splitBy):
-    wordsArray = tweet_text.split(splitBy)
+    wordsArray = splitStringAndReturnArray(tweet_text,splitBy)
     StopWords = list(set(wordsArray).intersection(set(stop_words)))
     return_str=""
     for word in wordsArray:
@@ -167,3 +170,105 @@ def readFileandReturnAnArray(fileName, readMode, isLower):
             myArray.append(lineRead.strip().lstrip())
     readHandle.close()
     return myArray
+
+# This function will read a non CSV/TSV file and load the contents into a dictionary
+def readNonCSVFileandReturnADict(fileName, readMode, delimiter, keyIndex, valueIndex, isLower):
+    mydict={}
+    with open(fileName, readMode) as readHandle:
+        for line in readHandle.readlines():
+            line = convertMultipleWhiteSpacesToSingleWhiteSpace(line)
+            line = splitStringAndReturnArray(line, delimiter)
+            if isLower:
+                mydict.update({line[keyIndex].lower(): line[valueIndex]})
+            else:
+                mydict.update({line[keyIndex]: line[valueIndex]})
+    readHandle.close()
+    return mydict
+
+# This function will return the pleasantness score for a given tweet text
+def getPleasantnessScoreFromDAL_List (tweet_text_array, dict):
+    pleasantnessScore =[]
+    for word in tweet_text_array:
+        if dict.has_key(word.lower()):
+            pleasantnessScore.append(dict[word.lower()])
+        else:
+            pleasantnessScore.append("-")
+    return pleasantnessScore
+
+# This function will return the words whose pleasantness score hasn't been calculated
+def getWordsWithoutPleasantnessSocre(tweet_text_array, scores):
+    wordsWithoutScore =[]
+    for i in xrange(0,len(scores)):
+        if scores[i] == '-':
+            wordsWithoutScore.append(tweet_text_array[i])
+    return wordsWithoutScore
+
+# This function will get all synonyms for all the words in a given array
+# This function returns a dictionary with key as the word and synonyms as array of values
+def getAllSynonymsInAnArray(word_array, wn):
+    dict = {}
+    for word in word_array:
+        synonyms = []
+        for syn in wn.synsets(word):
+            for synon in syn.lemma_names():
+                synonyms.append(str(synon).lower().replace("_"," "))
+        dict.update({word.lower():synonyms})
+    return dict
+
+# This function will go through a pleasantness score array and return the maximum value
+# If no value is found, or the array is empty it will return a zero
+def returnHighestPleasantnessScoreFromArray(scoreArray):
+    retscore = 0
+    if len(scoreArray) <=0:
+        return 0
+    else:
+        for score in scoreArray:
+            if score != '-' and score > retscore:
+                retscore = score
+        return retscore
+
+# This function computes adjusted score. It takes pleasantness score from DAL list, original tweet
+# pleasantness score computed from synonyms in WordNet as arguments and returns a dictionary
+# Key for this dictionary is the word with a valid score and value is the pleasantness score of the word
+# or the highest pleasantness score of a synonym of the word
+# Words & synonyms of words which are not in either DAL are ignored
+def readjustScore(tweet_array, originalPleasantnessScore, synonymsPleasantnessScore):
+
+    dict = {}
+    second_counter = 0
+    for i in xrange(0,len(tweet_array)):
+        if originalPleasantnessScore[i] != '-':
+            dict.update({tweet_array[i]:originalPleasantnessScore[i]})
+        else:
+            if len(synonymsPleasantnessScore) >0 :
+                if synonymsPleasantnessScore[second_counter] != 0:
+                    dict.update({tweet_array[i]: synonymsPleasantnessScore[second_counter]})
+                second_counter += 1
+    return dict
+
+# This method accepts a dictionary and returns a sentiment score attached to it
+def getSentimentFromPlesantnessScore(pleasantnessScore):
+    sentimentScore = []
+    for key in pleasantnessScore:
+        curentScore = float(pleasantnessScore[key])
+        curentScore /= 3
+        if curentScore < 0.5:
+            sentimentScore.append(-1)
+        elif curentScore > 0.8:
+            sentimentScore.append(1)
+        else:
+            sentimentScore.append(0)
+    return sentimentScore
+
+# This method will return the final sentiment score from an array of sentiment scores
+def computeFinalSentiment(sentimentArray):
+    ret_sentiment =0
+    for item in sentimentArray:
+        ret_sentiment += int(item)
+    return ret_sentiment
+
+# Extract date from timestamp
+def extractDateFromTimestamp(timestamp):
+    from dateutil import parser
+    d = parser.parse(timestamp.strip().lstrip())
+    return str(d.date())

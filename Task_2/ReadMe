@@ -1,0 +1,11 @@
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar \
+-D mapred.reduce.tasks=0 \
+-archives /home/tashwin/PoliticsSpeech/wordnet.zip#wordnet \
+-file /home/tashwin/PoliticsSpeech/ManipulateTweets.py \
+-file /home/tashwin/PoliticsSpeech/ComputeSentimentMapper.py \
+-file /home/tashwin/PoliticsSpeech/DAL.txt \
+-file /home/tashwin/PoliticsSpeech/nltkandyaml.mod \
+-file /home/tashwin/PoliticsSpeech/stopwords \
+-mapper ComputeSentimentMapper.py \
+-input /tashwin/TwitterSamp_Extract \
+-output /tashwin/TwitterSamp_Extract_Senti
